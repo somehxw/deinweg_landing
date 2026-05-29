@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="uk">
 <head>
     <meta charset="UTF-8">
@@ -746,7 +746,7 @@
         }
 
         .price-card li::before {
-            content: "✓";
+            content: "\2713";
             margin-right: 8px;
             color: var(--brand-green);
             font-weight: 700;
@@ -773,6 +773,68 @@
             margin-top: 10px;
         }
 
+        .news-header-row {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 22px;
+        }
+
+        .news-header-row .section-header {
+            margin-bottom: 0;
+        }
+
+        .news-card {
+            border-radius: 12px;
+            border: 1px solid var(--hairline);
+            background: var(--surface);
+            padding: 28px;
+        }
+
+        .news-meta {
+            display: inline-flex;
+            align-items: center;
+            min-height: 24px;
+            border-radius: 6px;
+            padding: 2px 8px;
+            font-size: 12px;
+            font-weight: 600;
+            background: #e6e0f5;
+            color: #391c57;
+        }
+
+        .news-card h3 {
+            margin-top: 12px;
+            font-size: 24px;
+            line-height: 1.25;
+            font-weight: 600;
+        }
+
+        .news-card p {
+            margin-top: 12px;
+            color: var(--slate);
+            font-size: 15px;
+            max-width: 960px;
+        }
+
+        .news-gallery {
+            margin-top: 18px;
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 12px;
+        }
+
+        .news-gallery img {
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            height: auto;
+            object-fit: cover;
+            border-radius: 10px;
+            border: 1px solid var(--hairline);
+            background: var(--surface);
+        }
+
         .vyshyvanka-image {
             width: 260px;
             max-width: 100%;
@@ -789,6 +851,7 @@
 
         .cta {
             padding: 64px 0;
+            background: var(--surface);
         }
 
         .cta-box {
@@ -797,7 +860,7 @@
             gap: 24px;
             align-items: center;
             border-radius: 12px;
-            background: var(--surface);
+            background: var(--card-bg);
             padding: 48px;
         }
 
@@ -860,6 +923,8 @@
             .feature-banner h3, .cta-box h2 { font-size: 30px; }
             .feature-grid, .events-grid, .program-cards, .price-grid { grid-template-columns: 1fr; }
             .vyshyvanka-image { width: 190px; transform: rotate(6deg); }
+            .news-header-row { align-items: flex-start; flex-direction: column; }
+            .news-gallery { grid-template-columns: 1fr; }
             .section { padding: 72px 0; }
             .feature-banner, .cta-box { padding: 28px; }
         }
@@ -877,9 +942,9 @@
                 <a href="#programs" data-i18n="nav.programs">Програми</a>
                 <a href="#pricing" data-i18n="nav.formats">Формати</a>
                 <a href="#events" data-i18n="nav.events">Події</a>
+                <a href="#news" data-i18n="nav.news">Новини</a>
             </div>
             <div class="nav-actions">
-                <a class="button button-secondary" href="#events" data-i18n="nav.schedule">Розклад</a>
                 <a class="button button-primary" href="./enrollment.html" data-i18n="nav.signup">Записатися</a>
             </div>
         </nav>
@@ -966,7 +1031,7 @@
                             <p data-i18n="programs.p1Text">Групи за віком і рівнем: говоріння, читання, письмо, словниковий запас.</p>
                         </article>
                         <article class="program-card">
-                            <span class="tag tag-green" data-i18n="programs.p2Tag">culture</span>
+                            <span class="tag tag-green" data-i18n="programs.p2Tag">традиції</span>
                             <h3 data-i18n="programs.p2Title">Історія та традиції</h3>
                             <p data-i18n="programs.p2Text">Знайомимо дітей з культурою через історії, практики, символи і свята.</p>
                         </article>
@@ -974,12 +1039,12 @@
                     <h3 class="program-group-title" style="margin-top: 20px;" data-i18n="programs.extraTitle">Додаткові заняття</h3>
                     <div class="program-cards">
                         <article class="program-card">
-                            <span class="tag tag-orange" data-i18n="programs.p3Tag">studio</span>
+                            <span class="tag tag-orange" data-i18n="programs.p3Tag">майстерні</span>
                             <h3 data-i18n="programs.p3Title">Творчі майстерні</h3>
                             <p data-i18n="programs.p3Text">Малювання, вокал, гончарство, рукоділля та сезонні майстер-класи.</p>
                         </article>
                         <article class="program-card">
-                            <span class="tag tag-sky" data-i18n="programs.p4Tag">community</span>
+                            <span class="tag tag-sky" data-i18n="programs.p4Tag">спільнота</span>
                             <h3 data-i18n="programs.p4Title">Клуби, зустрічі та свята</h3>
                             <p data-i18n="programs.p4Text">Святкуємо разом з учнями школи та їхніми батьками важливі для нашої спільноти свята, а також проводимо підлітковий клуб і настільні ігри.</p>
                         </article>
@@ -1042,6 +1107,27 @@
                     </div>
                     <img class="vyshyvanka-image" src="./photo_2026-05-26_20-15-50-removebg-preview.png" alt="" aria-hidden="true">
                 </div>
+            </div>
+        </section>
+
+        <section id="news" class="section">
+            <div class="container">
+                <div class="news-header-row">
+                    <div class="section-header">
+                        <div class="section-kicker" data-i18n="news.kicker">Новини школи</div>
+                        <h2 data-i18n="news.title">Новини з життя deinweg</h2>
+                    </div>
+                    <a class="button button-primary" href="../deinweg_front/public/news.html" data-i18n="news.more">Більше новин</a>
+                </div>
+                <article class="news-card">
+                    <span class="news-meta" data-i18n="news.date">28 травня 2026</span>
+                    <h3 data-i18n="news.itemTitle">Відкриваємо літню групу творчих майстерень</h3>
+                    <p data-i18n="news.itemText">З 15 червня стартує літній блок: малювання, музична майстерня та заняття з вишивки. Групи малі, тож щотижня кожна дитина отримує увагу викладача та можливість презентувати власні роботи на відкритому підсумковому дні.</p>
+                    <div class="news-gallery">
+                        <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Students_in_a_classroom.jpg" alt="Учні на уроці в класі">
+                        <img src="https://commons.wikimedia.org/wiki/Special:FilePath/School%20building%20(7175881896).jpg" alt="Шкільний двір і будівля школи">
+                    </div>
+                </article>
             </div>
         </section>
 
@@ -1118,7 +1204,7 @@
                     "nav.programs": "Програми",
                     "nav.formats": "Формати",
                     "nav.events": "Події",
-                    "nav.schedule": "Розклад",
+                    "nav.news": "Новини",
                     "nav.signup": "Записатися",
                     "hero.eyebrow": "Українська школа в Нюрнберзі",
                     "hero.title": "Навчання, культура і спільнота для українських дітей",
@@ -1159,13 +1245,13 @@
                     "programs.p1Tag": "основна програма",
                     "programs.p1Title": "Українська мова",
                     "programs.p1Text": "Групи за віком і рівнем: говоріння, читання, письмо, словниковий запас.",
-                    "programs.p2Tag": "culture",
+                    "programs.p2Tag": "традиції",
                     "programs.p2Title": "Історія та традиції",
                     "programs.p2Text": "Знайомимо дітей з культурою через історії, практики, символи і свята.",
-                    "programs.p3Tag": "studio",
+                    "programs.p3Tag": "майстерні",
                     "programs.p3Title": "Творчі майстерні",
                     "programs.p3Text": "Малювання, вокал, гончарство, рукоділля та сезонні майстер-класи.",
-                    "programs.p4Tag": "community",
+                    "programs.p4Tag": "спільнота",
                     "programs.p4Title": "Клуби, зустрічі та свята",
                     "programs.p4Text": "Святкуємо разом з учнями школи та їхніми батьками важливі для нашої спільноти свята, а також проводимо підлітковий клуб і настільні ігри.",
                     "pricing.kicker": "Формати",
@@ -1192,6 +1278,12 @@
                     "events.tag2": "підлітки",
                     "events.card2Title": "Клуб без гаджетів",
                     "events.card2Text": "Простір для розмов, настільних ігор, командних задач і дружнього спілкування.",
+                    "news.kicker": "Новини школи",
+                    "news.title": "Новини з життя deinweg",
+                    "news.more": "Більше новин",
+                    "news.date": "28 травня 2026",
+                    "news.itemTitle": "Відкриваємо літню групу творчих майстерень",
+                    "news.itemText": "З 15 червня стартує літній блок: малювання, музична майстерня та заняття з вишивки. Групи малі, тож щотижня кожна дитина отримує увагу викладача та можливість презентувати власні роботи на відкритому підсумковому дні.",
                     "cta.title": "Готові приєднатися до deinweg?",
                     "cta.text": "Напишіть нам, щоб уточнити групу, розклад і формат першого заняття для вашої дитини.",
                     "cta.button": "Подати заявку",
@@ -1212,7 +1304,7 @@
                     "nav.programs": "Programme",
                     "nav.formats": "Formate",
                     "nav.events": "Veranstaltungen",
-                    "nav.schedule": "Stundenplan",
+                    "nav.news": "Neuigkeiten",
                     "nav.signup": "Anmelden",
                     "hero.eyebrow": "Ukrainische Schule in Nürnberg",
                     "hero.title": "Lernen, Kultur und Gemeinschaft für ukrainische Kinder",
@@ -1253,13 +1345,13 @@
                     "programs.p1Tag": "Grundprogramm",
                     "programs.p1Title": "Ukrainische Sprache",
                     "programs.p1Text": "Gruppen nach Alter und Niveau: Sprechen, Lesen, Schreiben, Wortschatz.",
-                    "programs.p2Tag": "culture",
+                    "programs.p2Tag": "Kultur",
                     "programs.p2Title": "Geschichte und Traditionen",
                     "programs.p2Text": "Wir machen Kinder mit Kultur durch Geschichten, Praktiken, Symbole und Feiertage vertraut.",
-                    "programs.p3Tag": "studio",
+                    "programs.p3Tag": "Werkstatt",
                     "programs.p3Title": "Kreative Werkstätten",
                     "programs.p3Text": "Malen, Gesang, Töpferei, Handarbeit und saisonale Workshops.",
-                    "programs.p4Tag": "community",
+                    "programs.p4Tag": "Gemeinschaft",
                     "programs.p4Title": "Clubs, Treffen und Feiertage",
                     "programs.p4Text": "Wir feiern gemeinsam mit unseren Schülerinnen und Schülern sowie ihren Eltern wichtige Feste unserer Gemeinschaft und organisieren Jugendclub und Brettspiele.",
                     "pricing.kicker": "Formate",
@@ -1286,6 +1378,12 @@
                     "events.tag2": "Jugend",
                     "events.card2Title": "Club ohne Gadgets",
                     "events.card2Text": "Raum für Gespräche, Brettspiele, Teamaufgaben und freundliche Kommunikation.",
+                    "news.kicker": "Schulnachrichten",
+                    "news.title": "Neuigkeiten aus dem deinweg-Alltag",
+                    "news.more": "Mehr Neuigkeiten",
+                    "news.date": "28. Mai 2026",
+                    "news.itemTitle": "Wir starten eine Sommergruppe für kreative Werkstätten",
+                    "news.itemText": "Ab dem 15. Juni beginnt unser Sommerblock mit Malen, Musikwerkstatt und Stickerei. Die Gruppen sind klein, deshalb bekommt jedes Kind genug Aufmerksamkeit und die Möglichkeit, eigene Arbeiten beim offenen Abschlusstag zu präsentieren.",
                     "cta.title": "Bereit, Teil von deinweg zu werden?",
                     "cta.text": "Schreiben Sie uns, um Gruppe, Zeitplan und Format der ersten Stunde für Ihr Kind zu klären.",
                     "cta.button": "Anmeldung senden",
@@ -1392,3 +1490,5 @@
     </script>
 </body>
 </html>
+
+
