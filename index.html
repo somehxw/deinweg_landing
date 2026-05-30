@@ -1117,15 +1117,15 @@
                         <div class="section-kicker" data-i18n="news.kicker">Новини школи</div>
                         <h2 data-i18n="news.title">Новини з життя deinweg</h2>
                     </div>
-                    <a class="button button-primary" href="../deinweg_front/public/news.html" data-i18n="news.more">Більше новин</a>
+                    <a class="button button-primary" href="http://localhost:5173/news" data-i18n="news.more">Більше новин</a>
                 </div>
                 <article class="news-card">
-                    <span class="news-meta" data-i18n="news.date">28 травня 2026</span>
-                    <h3 data-i18n="news.itemTitle">Відкриваємо літню групу творчих майстерень</h3>
-                    <p data-i18n="news.itemText">З 15 червня стартує літній блок: малювання, музична майстерня та заняття з вишивки. Групи малі, тож щотижня кожна дитина отримує увагу викладача та можливість презентувати власні роботи на відкритому підсумковому дні.</p>
+                    <span class="news-meta" id="news-preview-date">28 травня 2026</span>
+                    <h3 id="news-preview-title">Відкриваємо літню групу творчих майстерень</h3>
+                    <p id="news-preview-text">З 15 червня стартує літній блок: малювання, музична майстерня та заняття з вишивки. Групи малі, тож щотижня кожна дитина отримує увагу викладача та можливість презентувати власні роботи на відкритому підсумковому дні.</p>
                     <div class="news-gallery">
-                        <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Students_in_a_classroom.jpg" alt="Учні на уроці в класі">
-                        <img src="https://commons.wikimedia.org/wiki/Special:FilePath/School%20building%20(7175881896).jpg" alt="Шкільний двір і будівля школи">
+                        <img id="news-preview-image-1" src="https://commons.wikimedia.org/wiki/Special:FilePath/Students_in_a_classroom.jpg" alt="Учні на уроці в класі">
+                        <img id="news-preview-image-2" src="https://commons.wikimedia.org/wiki/Special:FilePath/School%20building%20(7175881896).jpg" alt="Шкільний двір і будівля школи">
                     </div>
                 </article>
             </div>
@@ -1197,6 +1197,17 @@
         (function () {
             const THEME_KEY = "deinweg_theme";
             const LANG_KEY = "deinweg_lang";
+            const NEWS_ENDPOINT = "/api/v1/news/";
+            const NEWS_FALLBACK_API_BASE_URL = "https://deinweg-app.i-lab.ink";
+            const newsPreviewDate = document.getElementById("news-preview-date");
+            const newsPreviewTitle = document.getElementById("news-preview-title");
+            const newsPreviewText = document.getElementById("news-preview-text");
+            const newsPreviewImage1 = document.getElementById("news-preview-image-1");
+            const newsPreviewImage2 = document.getElementById("news-preview-image-2");
+            let lastNewsRequestId = 0;
+            let latestNewsDetail = null;
+            let latestNewsApiBaseUrl = "";
+            let latestNewsDetailLoaded = false;
 
             const translations = {
                 ua: {
@@ -1407,6 +1418,135 @@
             const floatingControls = document.getElementById("floating-controls");
             const floatingFab = document.getElementById("floating-fab");
 
+            function formatNewsDate(dateValue, lang) {
+                if (!dateValue) return "";
+                const date = new Date(dateValue);
+                if (Number.isNaN(date.getTime())) return dateValue;
+                const locale = lang === "de" ? "de-DE" : "uk-UA";
+                return new Intl.DateTimeFormat(locale, {
+                    day: "numeric",
+                    month: "long",
+                    year: "numeric"
+                }).format(date);
+            }
+
+            function normalizeApiBaseUrl(value) {
+                if (!value || typeof value !== "string") return "";
+                return value.replace(/\/+$/, "");
+            }
+
+            function getNewsApiCandidates() {
+                const candidates = [];
+                const hasHttpOrigin = /^https?:\/\//i.test(window.location.origin || "");
+                if (hasHttpOrigin) {
+                    candidates.push(window.location.origin + NEWS_ENDPOINT);
+                }
+                const fallbackBase = normalizeApiBaseUrl(NEWS_FALLBACK_API_BASE_URL);
+                if (fallbackBase) {
+                    candidates.push(fallbackBase + NEWS_ENDPOINT);
+                }
+                return candidates;
+            }
+
+            function resolveNewsImageUrl(rawUrl, apiBaseUrl) {
+                if (!rawUrl) return "";
+                if (/^https?:\/\//i.test(rawUrl)) return rawUrl;
+                const base = normalizeApiBaseUrl(apiBaseUrl);
+                if (!base) return rawUrl;
+                return rawUrl.startsWith("/") ? base + rawUrl : base + "/" + rawUrl;
+            }
+
+            function applyNewsPreview(newsItem, lang, apiBaseUrl) {
+                if (!newsItem) return;
+                if (newsPreviewDate) newsPreviewDate.textContent = formatNewsDate(newsItem.created_at, lang) || newsPreviewDate.textContent;
+                if (newsPreviewTitle && newsItem.title) newsPreviewTitle.textContent = newsItem.title;
+                if (newsPreviewText && newsItem.text) newsPreviewText.textContent = newsItem.text;
+
+                const images = Array.isArray(newsItem.images) ? newsItem.images : [];
+                const firstUrl = resolveNewsImageUrl(images[0] && (images[0].image_url || images[0].image), apiBaseUrl);
+                const secondUrl = resolveNewsImageUrl(images[1] && (images[1].image_url || images[1].image), apiBaseUrl);
+
+                if (newsPreviewImage1 && firstUrl) {
+                    newsPreviewImage1.src = firstUrl;
+                    newsPreviewImage1.alt = newsItem.title || newsPreviewImage1.alt;
+                }
+
+                if (newsPreviewImage2) {
+                    if (secondUrl) {
+                        newsPreviewImage2.src = secondUrl;
+                        newsPreviewImage2.alt = newsItem.title || newsPreviewImage2.alt;
+                        newsPreviewImage2.style.display = "";
+                    } else {
+                        newsPreviewImage2.style.display = "none";
+                    }
+                }
+            }
+
+            async function loadLatestNews(lang) {
+                if (latestNewsDetailLoaded && latestNewsDetail) {
+                    applyNewsPreview(latestNewsDetail, lang, latestNewsApiBaseUrl);
+                    return;
+                }
+                const requestId = ++lastNewsRequestId;
+                const candidates = getNewsApiCandidates();
+
+                for (const endpoint of candidates) {
+                    try {
+                        const response = await fetch(endpoint, {
+                            method: "GET",
+                            headers: {
+                                "Accept": "application/json",
+                                "Accept-Language": lang === "de" ? "de" : "uk"
+                            }
+                        });
+                        if (!response.ok) continue;
+
+                        const payload = await response.json();
+                        if (requestId !== lastNewsRequestId || !Array.isArray(payload) || payload.length === 0) {
+                            return;
+                        }
+
+                        const sortedNews = payload
+                            .slice()
+                            .sort(function (a, b) {
+                                const aTime = new Date(a && a.created_at ? a.created_at : 0).getTime();
+                                const bTime = new Date(b && b.created_at ? b.created_at : 0).getTime();
+                                return bTime - aTime;
+                            });
+
+                        const apiBaseUrl = endpoint.replace(/\/api\/v1\/news\/?$/i, "");
+                        const latestItem = sortedNews[0];
+                        const latestId = latestItem && latestItem.id ? String(latestItem.id) : "";
+                        if (!latestId) continue;
+
+                        const detailUrl = endpoint.replace(/\/+$/, "") + "/" + encodeURIComponent(latestId) + "/";
+                        const detailResponse = await fetch(detailUrl, {
+                            method: "GET",
+                            headers: {
+                                "Accept": "application/json",
+                                "Accept-Language": lang === "de" ? "de" : "uk"
+                            }
+                        });
+                        if (!detailResponse.ok) continue;
+
+                        const detailPayload = await detailResponse.json();
+                        if (requestId !== lastNewsRequestId || !detailPayload || typeof detailPayload !== "object") {
+                            return;
+                        }
+
+                        latestNewsApiBaseUrl = apiBaseUrl;
+                        latestNewsDetail = detailPayload;
+                        latestNewsDetailLoaded = true;
+                        applyNewsPreview(detailPayload, lang, apiBaseUrl);
+                        return;
+                    } catch (_) {
+                        // Try next endpoint candidate.
+                    }
+                }
+
+                // Keep static fallback preview when API is unavailable.
+            }
+
             function setTextByLang(lang) {
                 const dict = translations[lang] || translations.ua;
                 document.querySelectorAll("[data-i18n]").forEach(function (el) {
@@ -1419,6 +1559,9 @@
                 document.querySelectorAll("#lang-switcher .dropdown-item").forEach(function (item) {
                     item.classList.toggle("active", item.getAttribute("data-lang-value") === lang);
                 });
+                if (latestNewsDetail) {
+                    applyNewsPreview(latestNewsDetail, lang, latestNewsApiBaseUrl);
+                }
             }
 
             function setTheme(theme) {
@@ -1486,9 +1629,13 @@
             const savedLang = localStorage.getItem(LANG_KEY);
             const normalizedLang = savedLang === "uk" ? "ua" : savedLang;
             setTextByLang(normalizedLang || "ua");
+            loadLatestNews(normalizedLang || "ua");
         })();
     </script>
 </body>
 </html>
+
+
+
 
 
