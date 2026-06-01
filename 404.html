@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 | deinweg</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --page-bg: #ffffff;
+            --hairline: #e5e3df;
+            --ink: #111111;
+            --brand-blue: #1d4ed8;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background: var(--page-bg);
+            color: var(--ink);
+            font-family: "Inter", "Notion Sans", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            display: flex;
+            flex-direction: column;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        .topbar {
+            background: #ffffff;
+            border-bottom: 1px solid var(--hairline);
+        }
+
+        .topbar-inner {
+            min-height: 82px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 24px;
+        }
+
+        .brand {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            font-size: clamp(36px, 2.7vw, 48px);
+            font-weight: 700;
+            line-height: 1;
+        }
+
+        .brand-mark {
+            width: 44px;
+            height: 44px;
+            border-radius: 10px;
+            background: #111111;
+            color: #ffffff;
+            display: grid;
+            place-items: center;
+            font-size: 26px;
+            font-weight: 700;
+        }
+
+        main {
+            flex: 1;
+            display: grid;
+            place-items: center;
+            padding: 36px 20px 72px;
+            text-align: center;
+        }
+
+        .code {
+            margin: 0;
+            font-size: clamp(118px, 20vw, 260px);
+            font-weight: 800;
+            line-height: 0.95;
+            letter-spacing: -0.04em;
+            color: var(--brand-blue);
+        }
+
+        .message {
+            margin: 20px auto 0;
+            max-width: 680px;
+            font-size: clamp(20px, 2.1vw, 32px);
+            font-weight: 500;
+            line-height: 1.35;
+            color: #111111;
+        }
+    </style>
+</head>
+<body>
+    <header class="topbar">
+        <div class="topbar-inner">
+            <a class="brand" href="./index.html" aria-label="deinweg - на головну">
+                <span class="brand-mark">d</span>
+                <span>deinweg</span>
+            </a>
+        </div>
+    </header>
+    <main>
+        <section aria-labelledby="error-title">
+            <h1 id="error-title" class="code">404</h1>
+            <p class="message">На жаль, сторінку не знайдено. Перевірте адресу або поверніться на головну.</p>
+        </section>
+    </main>
+</body>
+</html>
